@@ -62,9 +62,9 @@ class InteractiveRecord
         DB[:conn].execute(sql, name)
     end
 
-    def self.find_by(attribute)
-        sql = "SELECT * FROM #{self.table_name} WHERE attribute = ?"
-        DB[:conn].execute(sql, attribute)
+    def self.find_by(attribute_hash)
+        sql = "SELECT * FROM #{self.table_name} WHERE ? = ?"
+        DB[:conn].execute(sql, attribute_hash.keys[0])
     end
 
     def values_for_insert
