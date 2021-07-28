@@ -13,12 +13,4 @@ class Student < InteractiveRecord
         @grade = grade
     end
 
-    def self.column_names(row)
-        row.map do |s|
-        s.id = row[0]
-        s.name = row[1]
-        s.grade = row[2]
-        end
-    end
-
 end

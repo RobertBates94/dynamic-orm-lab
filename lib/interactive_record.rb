@@ -1,5 +1,6 @@
 require_relative "../config/environment.rb"
 require 'active_support/inflector'
+require "pry" 
 
 class InteractiveRecord
 
@@ -55,6 +56,22 @@ class InteractiveRecord
     end
 
     def save
+    end
+
+    def self.column_names
+        sql = <<-SQL
+        CREATE TABLE IF NOT EXISTS #{self.table_name} (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            grade INTEGER
+        )
+        SQL
+        table_info = DB[:conn].execute(sql)
+        column_names = []
+
+        table_info.map do |row|
+            column_names << row["name"]
+        end
     end
 
   
