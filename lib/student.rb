@@ -4,13 +4,9 @@ require 'interactive_record.rb'
 
 class Student < InteractiveRecord
 
-    attr_accessor :name, :grade
-    attr_reader :id
 
-    def initialize(id = nil, name, grade)
-        @id = id
-        @name = name
-        @grade = grade
-    end
+  self.column_names.each do |col_name|
+        attr_accessor col_name.to_sym
+      end
 
 end
