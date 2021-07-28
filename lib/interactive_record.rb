@@ -26,36 +26,19 @@ class InteractiveRecord
         DB[:conn].execute(sql)
     end
 
-    def self.find(id)
-        sql = <<-SQL
-        SELECT * FROM #{self.table_name} WHERE id = ?
-        SQL
-
-        rows = DB[:conn].execute(sql, id)
-        self.reify_from_row(row.first)
-    end
-
-    def self.reify_from_row(row)
-        self.new.map do |s|
-            s.id = row[0]
-            s.name = row[1]
-            s.grade = row[2]
-        end
-    end
-
     def table_name_for_insert
         self.class.table_name
     end
 
-    def insert
-        sql = <<-SQL
-            INSERT INTO #(self.table_name) (name, grade)
-            VALUES (?, ?)
-        SQL
+    #def insert
+        #sql = <<-SQL
+           # INSERT INTO #(self.table_name) (name, grade)
+    #         VALUES (?, ?)
+    #     SQL
 
-        DB[:conn].execute(sql, self.name, self.grade)
-        self.id = DB[:conn].execute("SELECT last_insert_rowid();").flatten.first
-    end
+    #     DB[:conn].execute(sql, self.name, self.grade)
+    #     self.id = DB[:conn].execute("SELECT last_insert_rowid();").flatten.first
+    # end
 
     def self.find_by_name(name)
         sql = "SELECT * FROM #{self.table_name} WHERE name = ?"
@@ -63,8 +46,10 @@ class InteractiveRecord
     end
 
     def self.find_by(attribute_hash)
-        sql = "SELECT * FROM #{self.table_name} WHERE ? = ?"
-        DB[:conn].execute(sql, attribute_hash.to_s.keys[0], attribute_hash.values[0])
+        sql = "SELECT * FROM #{self.table_name} WHERE #{attribute_hash.keys[0]} = '#{attribute_hash.values[0]}'"
+        #sql = "SELECT * FROM #{self.table_name} WHERE ? = #{attribute_hash.values[0]}"
+       # binding.pry
+        DB[:conn].execute(sql)
     end
 
     def values_for_insert
@@ -79,13 +64,13 @@ class InteractiveRecord
         self.class.column_names.delete_if {|col| col == "id"}.join(", ")
     end
 
-    def update
-        sql = <<-SQL
-        UPDATE #{self.table_name} SET name = ?, grade = ?, WHERE id = ?
-        SQL
+    # def update
+    #     sql = <<-SQL
+    #     UPDATE #{self.table_name} SET name = ?, grade = ?, WHERE id = ?
+    #     SQL
 
-        DB[:conn].execute(sql, self.name, self.grade, self.id)
-    end
+    #     DB[:conn].execute(sql, self.name, self.grade, self.id)
+    # end
 
     def save
         sql = "INSERT INTO #{table_name_for_insert} (#{col_names_for_insert}) VALUES (#{values_for_insert})"
